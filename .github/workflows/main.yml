@@ -25,18 +25,24 @@ jobs:
         run: |
           echo ::set-output name=branch::"release/$(date +%Y-%m-%d)"
       - name: Create release branch and merge develop
+        id: branch
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }}"
           git checkout -b ${{ steps.vars.outputs.branch }}
           git merge --no-ff origin/develop
           git push --set-upstream origin ${{ steps.vars.outputs.branch }}
+          changelog_master=$(git log origin/master..HEAD --merges --pretty="format:%b")
+          changelog_develop=$(git log origin/develop..HEAD --merges --pretty="format:%b")
+          echo "::set-output name=changelog_master::${changelog_master}"
+          echo "::set-output name=changelog_develop::${changelog_develop}"
       - name: Develop PR
         uses: repo-sync/pull-request@v2
         with:
           source_branch: ${{ steps.vars.outputs.branch }}
           destination_branch: develop
           pr_title: "[Develop] ${{ steps.vars.outputs.branch }}"
+          pr_body: "${{ steps.branch.outputs.changelog_develop }}"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_allow_empty: true
       - name: Master PR
@@ -45,6 +51,7 @@ jobs:
           source_branch: ${{ steps.vars.outputs.branch }}
           destination_branch: master
           pr_title: "[Master] ${{ steps.vars.outputs.branch }}"
+          pr_body: "${{ steps.branch.outputs.changelog_master }}"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_allow_empty: true
 
