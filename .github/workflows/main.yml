@@ -34,8 +34,8 @@ jobs:
           git push --set-upstream origin ${{ steps.vars.outputs.branch }}
           changelog_master=$(git log origin/master..HEAD --merges --pretty="format:%b")
           changelog_develop=$(git log origin/develop..HEAD --merges --pretty="format:%b")
-          echo "::set-output name=changelog_master::${changelog_master}"
-          echo "::set-output name=changelog_develop::${changelog_develop}"
+          echo ::set-output name=changelog_master::${changelog_master}
+          echo ::set-output name=changelog_develop::${changelog_develop}
       - name: Develop PR
         uses: repo-sync/pull-request@v2
         with:
