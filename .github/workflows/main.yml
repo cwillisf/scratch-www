@@ -42,7 +42,7 @@ jobs:
           source_branch: ${{ steps.vars.outputs.branch }}
           destination_branch: develop
           pr_title: "[Develop] ${{ steps.vars.outputs.branch }}"
-          pr_body: "changelog_develop is ${{ steps.branch.outputs.changelog_develop }}"
+          pr_body: ${{ steps.branch.outputs.changelog_develop }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_allow_empty: true
       - name: Master PR
@@ -51,7 +51,6 @@ jobs:
           source_branch: ${{ steps.vars.outputs.branch }}
           destination_branch: master
           pr_title: "[Master] ${{ steps.vars.outputs.branch }}"
-          pr_body: "changelog_master is ${{ steps.branch.outputs.changelog_master }}"
+          pr_body: ${{ steps.branch.outputs.changelog_master }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_allow_empty: true
-
