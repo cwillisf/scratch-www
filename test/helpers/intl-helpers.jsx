@@ -7,45 +7,48 @@ import {createIntl, IntlProvider} from 'react-intl';
 import {mount, shallow} from 'enzyme';
 import intlShape from '../../src/lib/intl-shape';
 
-const shallowWithIntl = (node, {context} = {}) => {
-    return shallow(
+/**
+ * @type {import('react-intl').IntlConfig}
+ */
+const defaultIntlConfig = Object.freeze({
+    locale: 'en',
+    messages: {},
+    textComponent: 'span'
+});
+
+const shallowWithIntl = (node, {context} = {}) =>
+    shallow(
         node,
         {
             context: Object.assign({}, context),
             wrappingComponent: IntlProvider,
-            wrappingComponentProps: {
-                locale: 'en',
-                messages: {}
-            }
+            wrappingComponentProps: defaultIntlConfig
         }
     ).dive();
-};
 
 const mountWithIntl = (node, {context, childContextTypes} = {}) => {
-    const intl = createIntl({locale: 'en', messages: {}});
+    const intl = createIntl(defaultIntlConfig);
     return mount(
         node,
         {
             context: Object.assign({}, context, {intl}),
             childContextTypes: Object.assign({}, {intl: intlShape}, childContextTypes),
             wrappingComponent: IntlProvider,
-            wrappingComponentProps: {
-                locale: 'en',
-                messages: {}
-            }
+            wrappingComponentProps: defaultIntlConfig
         }
     );
 };
 
 // react-test-renderer component for use with snapshot testing
-const componentWithIntl = (children, props = {locale: 'en'}) => renderer.create(
-    <IntlProvider
-        textComponent="span"
-        {...props}
-    >
-        {children}
-    </IntlProvider>
-);
+const componentWithIntl = (children, props = {}) =>
+    renderer.create(
+        <IntlProvider
+            {...defaultIntlConfig}
+            {...props}
+        >
+            {children}
+        </IntlProvider>
+    );
 
 export {
     componentWithIntl,
